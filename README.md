@@ -43,3 +43,5 @@ Interesting things to know
 --------------------------
 
 * A char is 4 bytes in Rust!
+
+* Breaking with a value is only possible inside a 'loop' not a 'while/for' loop!
