@@ -13,6 +13,7 @@ enum Message {
     Move { x: i32, y: i32},
     Write(String),
     ChangeColor(Color),
+    YetAnotherMessage,
 }
 
 impl Message {
@@ -26,6 +27,7 @@ impl Message {
 	    Message::Move { x, y } => println!("Calling on a move type: {}, {}!", x, y),
 	    Message::Write (s) => println!("Calling on a write type: {}!", s),
 	    Message::ChangeColor (c) => println!("Calling on a color type: {:#?}!", c),
+	    _ => println!("Default case in a match"),
 	}
     }
 }
@@ -46,6 +48,9 @@ fn main() {
     msg.print();
     msg.call();
     let msg = Message::ChangeColor(Color(1,2,3));
+    msg.print();
+    msg.call();
+    let msg = Message::YetAnotherMessage;
     msg.print();
     msg.call();
 }
