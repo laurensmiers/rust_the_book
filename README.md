@@ -6,6 +6,26 @@ A collection of the examples/exercices/... found in the rust tutorial "The Book"
 Interesting commands
 --------------------
 
+### Creating ###
+
+We can create a new package/application with:
+
+```
+$> cargo new <name_of_package>
+```
+
+An application has main.rs as its crate root.
+
+We can also create a new library:
+
+```
+$> cargo new --lib <name_of_package>
+```
+
+A library has lib.rs as its crate root.
+
+These are not mutually exclusive, we can have a library and application in the same package!
+
 ### Run ###
 
 Running an application.
