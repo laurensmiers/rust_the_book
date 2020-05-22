@@ -5,6 +5,14 @@ struct Rectangle {
 }
 
 impl Rectangle {
+    fn build_rectangle(width: u32, height: u32) -> Rectangle {
+        Rectangle { width, height }
+    }
+
+    fn square(size: u32) -> Rectangle {
+        Rectangle::build_rectangle(size, size)
+    }
+
     fn area(&self) -> u32 {
         self.width * self.height
     }
@@ -48,7 +56,15 @@ fn main() {
     println!(
         "The rectangle {:#?} can hold itself obviously: {}.",
         rect,
-	rect.can_hold(&rect),
+        rect.can_hold(&rect),
+    );
+
+    let square = Rectangle::square(3);
+
+    println!(
+        "The area of the square rectangle {:#?} is {} square pixels.",
+        square,
+        square.area()
     );
 }
 
