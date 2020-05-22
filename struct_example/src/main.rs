@@ -6,6 +6,8 @@ struct User {
     sign_in_count: u32,
 }
 
+struct Color(i32, i32, i32);
+
 fn build_user(email: String, username: String) -> User {
     User {
         email,
@@ -26,4 +28,8 @@ fn main() {
     };
 
     println!("Hello to the User: {:?}!", user2);
+
+    let color = Color(1, 2, 3);
+
+    println!("Pretty colors! {}, {}, {}!", color.0, color.1, color.2);
 }
