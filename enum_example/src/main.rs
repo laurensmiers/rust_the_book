@@ -53,4 +53,16 @@ fn main() {
     let msg = Message::YetAnotherMessage;
     msg.print();
     msg.call();
+
+    let some_u8_value = Some(8);
+
+    if let Some(8) = some_u8_value {
+        println!("Some is 8");
+    }
+
+    if let Some(9) = some_u8_value {
+        println!("BAD: Some is not 9, why am I here?");
+    } else {
+        println!("Correct: Some is not 9, so we should else");
+    }
 }
