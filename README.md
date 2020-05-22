@@ -6,6 +6,14 @@ A collection of the examples/exercices/... found in the rust tutorial "The Book"
 Interesting commands
 --------------------
 
+### Run ###
+
+Running an application.
+
+```
+$> cargo run
+```
+
 ### Compile ###
 
 1. Debug
