@@ -203,22 +203,24 @@ fn list_of_integers_ex() {
 
     println!("{:?}", int_vec);
 
-    let median = int_vec.get(int_vec.len()/2).expect("Bad index for median");
+    let median = int_vec
+        .get(int_vec.len() / 2)
+        .expect("Bad index for median");
     println!("median: {}", median);
 
     println!("Creating modes...");
     let mut map = HashMap::new();
     for i in &int_vec {
         let count = map.entry(i).or_insert(0);
-	*count += 1;
+        *count += 1;
     }
 
     let mut max_mode = (0, 0);
     for (number, mode) in &map {
         if max_mode.1 < *mode {
-	    max_mode.0 = **number;
-	    max_mode.1 = *mode;
-	}
+            max_mode.0 = **number;
+            max_mode.1 = *mode;
+        }
     }
 
     println!("max_mode: number: {}, mode: {}", max_mode.0, max_mode.1);
@@ -249,6 +251,43 @@ fn pig_latin_ex(text: &str) {
     println!("Piglatin text: '{}'", piglatin_text);
 }
 
+fn company_cli_ex(employee_db: &mut HashMap<String, String>, command: &str) {
+    let mut command_iter = command.split_whitespace();
+    let command_keyword = command_iter.next().expect("Please input a command");
+
+    match command_keyword {
+        "Add" => {
+            let user = command_iter.next().expect("Please input a Name");
+            command_iter.next().expect("Please give a department name");
+            let dep = command_iter.next().expect("Please give a department name");
+
+            // We overwrite any other name that was in here
+            employee_db
+                .entry(user.to_string())
+                .or_insert(dep.to_string());
+        }
+        "List" => {
+            let dep = command_iter
+                .next()
+                .expect("Please input a departmant or All for all departments");
+
+            for (name, department) in employee_db {
+                if department == dep || dep == "All" {
+                    println!("Name: {} -> Department: {}", name, department);
+                }
+            }
+        }
+        "Remove" => {
+            let user = command_iter.next().expect("Please input a Name");
+
+            match employee_db.remove_entry(user) {
+                Some(entry) => println!("Removed user with name {} from dep {}", entry.0, entry.1),
+                None => println!("No user with name: {}", user),
+            }
+        }
+        _ => println!("{} is not a known command", command),
+    }
+}
 
 fn main() {
     vector_tests();
@@ -260,4 +299,20 @@ fn main() {
     list_of_integers_ex();
 
     pig_latin_ex("first apple");
+
+    let mut employee_database: HashMap<String, String> = HashMap::new();
+
+    company_cli_ex(&mut employee_database, "Add Sally to Engineering");
+    company_cli_ex(&mut employee_database, "Add Amir to Sales");
+    println!("\nAll users:");
+    company_cli_ex(&mut employee_database, "List All");
+
+    println!("\nAll users from Engineering:");
+    company_cli_ex(&mut employee_database, "List Engineering");
+
+    println!("\nRemove user:");
+    company_cli_ex(&mut employee_database, "Remove Amir");
+
+    println!("\nAll users:");
+    company_cli_ex(&mut employee_database, "List All");
 }
