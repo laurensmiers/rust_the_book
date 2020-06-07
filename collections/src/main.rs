@@ -1,3 +1,5 @@
+use std::collections::HashMap;
+
 fn vector_tests() {
     let mut v: Vec<i32> = Vec::new();
     let mut c = vec![1, 2, 3];
@@ -73,6 +75,121 @@ fn vector_tests() {
     }
 }
 
+fn string_tests() {
+    let s1 = String::from("tic");
+    let s2 = String::from("tac");
+    let s3 = String::from("toe");
+
+    // Format does not take ownership, so it copies the s1/2/3 into a new String and stores it in s
+    let s = format!("{}-{}-{}", s1, s2, s3);
+
+    println!(
+        "All references still valid after format: {}  : {} + {} + {}",
+        s, s1, s2, s3
+    );
+
+    // Adding strings means taking ownership of the first one, so s1 is no longer valid after this
+    // This also means that it copies more efficiently than format!(), since we don't make a whole new string this time
+    let s = s1 + "-" + &s2 + "-" + &s3;
+
+    println!("{}", s);
+
+    println!("s2 and s3 are still valid: {} - {}", s2, s3);
+
+    // s1 is no longer valid, value was moved in addition above
+    // println!("s1 is no longer valid: {}", s1);
+
+    // String indexing is not supported
+    // let first_char = &s[0];
+
+    // Iterating over strings
+
+    // Will print out 6 chars (even though you would expect 4, see diacritics)
+    println!("Print chars:");
+    for c in "नमस्ते".chars() {
+        println!("{}", c);
+    }
+
+    // Will print out 18 bytes (byte != char, valid Unicode values can be > 1 byte)
+    println!("Print bytes:");
+    for b in "नमस्ते".bytes() {
+        println!("{}", b);
+    }
+}
+
+fn create_hash_map_with_zip() {
+    let teams = vec![String::from("Blue"), String::from("Yellow")];
+    let initial_scores = vec![10, 50];
+
+    let mut _scores: HashMap<_, _> =
+    // let mut scores: HashMap<String, i32> =
+        teams.into_iter().zip(initial_scores.into_iter()).collect();
+}
+
+fn hash_map_insertion() {
+    // Inserting can move ownership
+
+    let field_name = String::from("Score");
+    let field_value = 10;
+
+    let mut map = HashMap::new();
+    map.insert(field_name, field_value);
+
+    // Types that don't implement Copy trait will move ownership, f.e. String
+    // println!("field_name is no longer valid: {} - {}", field_name, field_value);
+    println!("field_value is still valid: {}", field_value);
+}
+
+fn hash_map_tests() {
+    let mut scores = HashMap::new();
+
+    scores.insert(String::from("Blue"), 10);
+    scores.insert(String::from("Red"), 10);
+
+    let team_name = String::from("Blue");
+    let score = scores.get(&team_name).expect("No team with that name!"); // get() returns Option<&V>
+    println!("score of {} team is {}", team_name, score);
+
+    println!("Original scores");
+    for (key, value) in &scores {
+        println!("{}: {}", key, value);
+    }
+
+    println!("Updating score of {}", team_name);
+    scores.insert(team_name, 20);
+
+    for (key, value) in &scores {
+        println!("{}: {}", key, value);
+    }
+
+    println!("Inserting yellow and NOT updating Blue");
+    scores.entry(String::from("Yellow")).or_insert(50);
+    scores.entry(String::from("Blue")).or_insert(50);
+
+    for (key, value) in &scores {
+        println!("{}: {}", key, value);
+    }
+
+    println!("Update a value based on the old value");
+    let text = "hello world wonderful world";
+
+    let mut map = HashMap::new();
+
+    for word in text.split_whitespace() {
+        let count = map.entry(word).or_insert(0);
+        *count += 1;
+    }
+
+    println!("{:?}", map);
+
+    create_hash_map_with_zip();
+    hash_map_insertion();
+}
+
 fn main() {
     vector_tests();
+
+    string_tests();
+
+    hash_map_tests();
 }
