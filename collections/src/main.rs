@@ -186,10 +186,51 @@ fn hash_map_tests() {
     hash_map_insertion();
 }
 
+fn list_of_integers_ex() {
+    let mut int_vec = vec![2, 2, 4, 3, 2, 1, 6];
+
+    println!("Vec: {:?}", int_vec);
+
+    let mut mean = 0;
+    for i in &int_vec {
+        mean += i;
+    }
+    mean /= int_vec.len();
+    println!("Mean value: {}", mean);
+
+    println!("Sort the list");
+    int_vec.sort();
+
+    println!("{:?}", int_vec);
+
+    let median = int_vec.get(int_vec.len()/2).expect("Bad index for median");
+    println!("median: {}", median);
+
+    println!("Creating modes...");
+    let mut map = HashMap::new();
+    for i in &int_vec {
+        let count = map.entry(i).or_insert(0);
+	*count += 1;
+    }
+
+    let mut max_mode = (0, 0);
+    for (number, mode) in &map {
+        if max_mode.1 < *mode {
+	    max_mode.0 = **number;
+	    max_mode.1 = *mode;
+	}
+    }
+
+    println!("max_mode: number: {}, mode: {}", max_mode.0, max_mode.1);
+}
+
+
 fn main() {
     vector_tests();
 
     string_tests();
 
     hash_map_tests();
+
+    list_of_integers_ex();
 }
