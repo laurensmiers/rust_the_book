@@ -224,6 +224,31 @@ fn list_of_integers_ex() {
     println!("max_mode: number: {}, mode: {}", max_mode.0, max_mode.1);
 }
 
+fn convert_to_pig_latin(word: &str) -> String {
+    let vowels = vec!['a', 'e', 'i', 'o', 'u'];
+    let first_letter = word.chars().nth(0).expect("Bad word provided");
+    let first_letter_is_vowel = vowels.contains(&first_letter);
+
+    if first_letter_is_vowel {
+        return format!("{}-hay", word);
+    } else {
+        return format!("{}-{}ay", &word.clone()[1..], first_letter);
+    }
+}
+
+fn pig_latin_ex(text: &str) {
+    let mut piglatin_text = String::new();
+
+    for word in text.split_whitespace() {
+        piglatin_text.push_str(&(convert_to_pig_latin(word) + " "));
+    }
+
+    piglatin_text.pop();
+
+    println!("Normal   text: '{}'", text);
+    println!("Piglatin text: '{}'", piglatin_text);
+}
+
 
 fn main() {
     vector_tests();
@@ -233,4 +258,6 @@ fn main() {
     hash_map_tests();
 
     list_of_integers_ex();
+
+    pig_latin_ex("first apple");
 }
