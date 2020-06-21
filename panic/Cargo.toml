@@ -1,0 +1,17 @@
+[package]
+name = "panic"
+version = "0.1.0"
+authors = ["laurens <miers132@gmail.com>"]
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+
+# Instead of unwinding on panic,
+# meaning we walk back up the stack and clean up
+# the data of every function, we abort immediatelly
+# and let the underlying OS cleanup for us.
+# This is usefull if you want to keep program binary as small as possible
+[profile.release]
+panic = 'abort'
