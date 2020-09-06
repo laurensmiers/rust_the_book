@@ -1,10 +1,5 @@
-pub trait Summary {
-    fn summarize_author(&self) -> String;
-
-    fn summarize(&self) -> String {
-        format!("(Read more from {}...)", self.summarize_author())
-    }
-}
+mod summary;
+use summary::Summary;
 
 pub struct NewsArticle {
     pub headline: String,
