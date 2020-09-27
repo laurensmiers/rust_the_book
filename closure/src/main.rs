@@ -9,26 +9,28 @@ fn main() {
     generate_workout(simulated_user_specified_value, simulated_random_number);
 }
 
-struct Cacher<T>
+struct Cacher<T, X, Y>
 where
-    T: Fn(u32) -> u32,
+    T: Fn(X) -> Y,
 {
     calculation: T,
-    values: HashMap<u32, u32>,
+    values: HashMap<X, Y>,
 }
 
-impl<T> Cacher<T>
+impl<T, X, Y> Cacher<T, X, Y>
 where
-    T: Fn(u32) -> u32,
+    X: std::cmp::Eq + std::hash::Hash + Copy,
+    Y: Copy,
+    T: Fn(X) -> Y,
 {
-    fn new(calculation: T) -> Cacher<T> {
+    fn new(calculation: T) -> Cacher<T, X, Y> {
         Cacher {
             calculation,
             values: HashMap::new(),
         }
     }
 
-    fn value(&mut self, arg: u32) -> u32 {
+    fn value(&mut self, arg: X) -> Y {
         match self.values.get(&arg) {
             Some(v) => *v,
             None => {
