@@ -1,3 +1,5 @@
+use std::cell::RefCell;
+
 pub struct Post {
     state: Option<Box<dyn State>>,
     content: String,
@@ -46,7 +48,7 @@ struct Draft {}
 
 impl State for Draft {
     fn request_review(self: Box<Self>) -> Box<dyn State> {
-        Box::new(PendingReview {})
+        Box::new(PendingReview::new())
     }
 
     fn approve(self: Box<Self>) -> Box<dyn State> {
@@ -58,7 +60,17 @@ impl State for Draft {
     }
 }
 
-struct PendingReview {}
+struct PendingReview {
+    approve_count: RefCell<i32>,
+}
+
+impl PendingReview {
+    pub fn new() -> PendingReview {
+        PendingReview {
+            approve_count: RefCell::new(0),
+        }
+    }
+}
 
 impl State for PendingReview {
     fn request_review(self: Box<Self>) -> Box<dyn State> {
@@ -66,7 +78,12 @@ impl State for PendingReview {
     }
 
     fn approve(self: Box<Self>) -> Box<dyn State> {
-        Box::new(Published {})
+        self.approve_count.replace_with(|&mut old| old + 1);
+        if *self.approve_count.borrow() >= 2 {
+            Box::new(Published {})
+        } else {
+            self
+        }
     }
 
     fn reject(self: Box<Self>) -> Box<dyn State> {
@@ -99,10 +116,14 @@ fn main() {
 
     post.add_text("I ate a salad for lunch today");
     assert_eq!("", post.content());
+    post.approve(); // Shouldn't cause approval to go forward!
 
     post.request_review();
     assert_eq!("", post.content());
 
-    post.approve();
+    post.approve(); // First valid approval, we need two so the content should still be empty
+    assert_eq!("", post.content());
+
+    post.approve(); // Last approval
     assert_eq!("I ate a salad for lunch today", post.content());
 }
