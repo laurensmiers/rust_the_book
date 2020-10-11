@@ -4,6 +4,7 @@ pub struct DraftPost {
 
 pub struct PendingReviewPost {
     content: String,
+    approve_count: i32,
 }
 
 pub struct Post {
@@ -18,6 +19,7 @@ impl DraftPost {
     pub fn request_review(self) -> PendingReviewPost {
         PendingReviewPost {
             content: self.content,
+            approve_count: 0,
         }
     }
 }
@@ -29,9 +31,18 @@ impl PendingReviewPost {
         }
     }
 
-    pub fn approve(self) -> Post {
-        Post {
-            content: self.content,
+    pub fn get_content(&self) -> &str {
+        ""
+    }
+
+    pub fn approve(&mut self) -> Option<Post> {
+        self.approve_count += 1;
+        if self.approve_count >= 2 {
+            Some(Post {
+                content: self.content.clone(),
+            })
+        } else {
+            None
         }
     }
 }
@@ -43,9 +54,25 @@ impl Post {
         }
     }
 
-    pub fn content(&self) -> &str {
+    pub fn get_content(&self) -> &str {
         &self.content
     }
+}
+
+fn _approve_post(post: &mut PendingReviewPost) -> Option<Post> {
+    let mut approve_count = 0;
+    for _ in 0..10 {
+        approve_count += 1;
+        match post.approve() {
+            Some(x) => {
+                println!("Post approved after {} approvals", approve_count);
+                return Some(x);
+            }
+            None => println!("Not enough approval counts"),
+        };
+    }
+
+    None
 }
 
 fn main() {
@@ -53,9 +80,12 @@ fn main() {
 
     post.add_text("I ate a salad for lunch today");
 
-    let post = post.request_review();
+    let mut post = post.request_review();
 
-    let post = post.approve();
+    let approv_res = _approve_post(&mut post);
 
-    assert_eq!("I ate a salad for lunch today", post.content());
+    match approv_res {
+        Some(post) => assert_eq!("I ate a salad for lunch today", post.get_content()),
+        None => panic!("Failed to approve post!"),
+    }
 }
