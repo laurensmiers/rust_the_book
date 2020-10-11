@@ -14,7 +14,9 @@ impl Post {
     }
 
     pub fn add_text(&mut self, text: &str) {
-        self.content.push_str(text);
+        if self.state.as_ref().unwrap().is_text_adjust_allowed() {
+            self.content.push_str(text);
+        }
     }
 
     pub fn content(&self) -> &str {
@@ -42,6 +44,10 @@ trait State {
     fn content<'a>(&self, _post: &'a Post) -> &'a str {
         ""
     }
+
+    fn is_text_adjust_allowed(&self) -> bool {
+        false
+    }
 }
 
 struct Draft {}
@@ -57,6 +63,10 @@ impl State for Draft {
 
     fn reject(self: Box<Self>) -> Box<dyn State> {
         self
+    }
+
+    fn is_text_adjust_allowed(&self) -> bool {
+        true
     }
 }
 
@@ -119,11 +129,15 @@ fn main() {
     post.approve(); // Shouldn't cause approval to go forward!
 
     post.request_review();
+    post.add_text("I ate a burger for lunch today"); //Shouldn't do anything
     assert_eq!("", post.content());
 
     post.approve(); // First valid approval, we need two so the content should still be empty
     assert_eq!("", post.content());
 
     post.approve(); // Last approval
+    assert_eq!("I ate a salad for lunch today", post.content());
+
+    post.add_text("I ate nothing for lunch today"); //Shouldn't do anything
     assert_eq!("I ate a salad for lunch today", post.content());
 }
