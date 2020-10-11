@@ -23,6 +23,12 @@ impl DraftPost {
 }
 
 impl PendingReviewPost {
+    pub fn reject(self) -> DraftPost {
+        DraftPost {
+            content: self.content,
+        }
+    }
+
     pub fn approve(self) -> Post {
         Post {
             content: self.content,
